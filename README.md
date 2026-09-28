@@ -1,5 +1,3 @@
-# cybersecurity-labs
-A collection of hands-on labs and projects documenting my journey in Linux, networking, and cybersecurity.
 # Cybersecurity Labs
 
 Hands-on Linux, networking, Bash, and cybersecurity labs documenting my learning and practical skills.
