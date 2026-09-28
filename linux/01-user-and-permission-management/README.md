@@ -288,8 +288,3 @@ rwx rwx ---
 
 Alice and Bob could access and modify the project, while Charlie was denied access.
 
-### Easy way to remember
-
-**`chown` → WHO owns it**
-
-**`chmod` → WHAT they can do**
