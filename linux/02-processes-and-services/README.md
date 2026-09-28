@@ -238,5 +238,5 @@ This lab helped me connect several Linux administration concepts:
 
 ```
 
- ## This lab showed me how different Linux tools can be combined instead of using each command independently.
+ This lab showed me how different Linux tools can be combined instead of using each command independently.
 
