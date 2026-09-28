@@ -236,36 +236,7 @@ This lab helped me connect several Linux administration concepts:
 * `tail -f` can monitor logs in real time.
 * Linux logs are valuable for troubleshooting.
 
-## Key Takeaway
-
-A useful troubleshooting workflow is:
-
-```text
-Problem
-   |
-Check processes
-   |
-Check services
-   |
-Check listening ports
-   |
-Identify the responsible process
-   |
-Check logs
-   |
-Take corrective action
-   |
-Verify the result
 ```
 
-This lab showed me how different Linux tools can be combined instead of using each command independently.
+ ## This lab showed me how different Linux tools can be combined instead of using each command independently.
 
-## Easy Way to Remember
-
-* `ps` → **What processes are running?**
-* `top` → **What are the processes using?**
-* `systemctl` → **What services are running?**
-* `ss` → **What network ports are being used?**
-* `kill` → **Stop a process**
-* `tail` → **See the end of a file/log**
-* `tail -f` → **Keep watching the log**
