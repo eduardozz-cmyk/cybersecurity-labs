@@ -21,6 +21,21 @@ The goal is to learn by **building, troubleshooting, and documenting** rather th
 ### Linux
 
 * [01 — User & Permission Management](linux/01-user-and-permission-management/)
+* [02 — Processes & Services](linux/02-processes-and-services/)
+* [03 — Web Server Troubleshooting](linux/03-web-server-troubleshooting/)
+* [04 — SSH & Remote Administration](linux/04-ssh-remote-administration/)
+
+### Networking
+
+Labs will be added as I develop my practical networking skills using tools such as Cisco Packet Tracer.
+
+### Bash
+
+Bash scripting labs and automation projects will be added as I develop my scripting skills.
+
+### Cybersecurity
+
+Security-focused labs and practical projects will be added as I progress toward more advanced cybersecurity topics.
 
 ## Learning Approach
 
@@ -34,4 +49,5 @@ For each lab, I document:
 * Testing and results
 * What I learned
 
-The labs will gradually increase in complexity as I develop my skills.
+The labs gradually increase in complexity as I develop my skills.
+
