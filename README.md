@@ -10,24 +10,26 @@ The goal is to learn by **building, troubleshooting, and documenting** rather th
 
 ## Areas
 
-* 🐧 Linux
-* 🌐 Networking
-* 💻 Bash
-* 🔐 Cybersecurity
-* 🛠️ System Administration
+- 🐧 Linux
+- 🌐 Networking
+- 💻 Bash
+- 🔐 Cybersecurity
+- 🛠️ System Administration
 
 ## Labs
 
 ### Linux
 
-* [01 — User & Permission Management](linux/01-user-and-permission-management/)
-* [02 — Processes & Services](linux/02-processes-and-services/)
-* [03 — Web Server Troubleshooting](linux/03-web-server-troubleshooting/)
-* [04 — SSH & Remote Administration](linux/04-ssh-remote-administration/)
+- [01 — User & Permission Management](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/linux/01-user-and-permission-management)
+- [02 — Processes & Services](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/linux/02-processes-and-services)
+- [03 — Web Server Troubleshooting](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/linux/03-web-server-troubleshooting)
+- [04 — SSH & Remote Administration](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/linux/04-ssh-remote-administration)
 
 ### Networking
 
-Labs will be added as I develop my practical networking skills using tools such as Cisco Packet Tracer.
+- [01 — VLSM Subnetting & Static Routing](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/01-vlsm-subnetting-static-routing)
+- [02 — VLSM Subnetting & Static Routing](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/02-vlsm-subnetting-static-routing)
+- [03 — Basic IPv6 Configuration](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/03-ipv6-configuration)
 
 ### Bash
 
@@ -41,13 +43,12 @@ Security-focused labs and practical projects will be added as I progress toward 
 
 For each lab, I document:
 
-* Objective
-* Environment
-* Scenario
-* Implementation
-* Troubleshooting
-* Testing and results
-* What I learned
+- Objective
+- Environment
+- Scenario
+- Implementation
+- Troubleshooting
+- Testing and results
+- What I learned
 
 The labs gradually increase in complexity as I develop my skills.
-
