@@ -30,6 +30,8 @@ The goal is to learn by **building, troubleshooting, and documenting** rather th
 - [01 — VLSM Subnetting & Static Routing](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/01-vlsm-subnetting-static-routing)
 - [02 — VLSM Subnetting & Static Routing](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/02-vlsm-subnetting-static-routing)
 - [03 — Basic IPv6 Configuration](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/03-ipv6-configuration)
+- [04 — Static IPv4 Routing](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/04-static-ipv4-routing)
+- [05 — Router-on-a-Stick VLAN Configuration](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/05-router-on-a-stick-vlan)
 
 ### Bash
 
