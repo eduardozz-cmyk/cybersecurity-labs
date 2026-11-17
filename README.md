@@ -33,6 +33,7 @@ The goal is to learn by **building, troubleshooting, and documenting** rather th
 - [04 — Static IPv4 Routing](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/04-static-ipv4-routing)
 - [05 — Router-on-a-Stick VLAN Configuration](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/05-router-on-a-stick-vlan)
 - [06 — Spanning Tree Protocol (STP)](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/06-spanning-tree-protocol)
+- [07 — VLAN Trunking Protocol (VTP)](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/07-vlan-trunking-protocol)
 
 ### Bash
 
