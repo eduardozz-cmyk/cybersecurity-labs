@@ -35,6 +35,7 @@ The goal is to learn by **building, troubleshooting, and documenting** rather th
 - [06 — Spanning Tree Protocol (STP)](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/06-spanning-tree-protocol)
 - [07 — VLAN Trunking Protocol (VTP)](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/07-vlan-trunking-protocol)
 - [08 — Network Address Translation (NAT)](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/08-nat)
+- [09 — Branch Network Configuration](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/09-branch-network)
 
 ### Bash
 
