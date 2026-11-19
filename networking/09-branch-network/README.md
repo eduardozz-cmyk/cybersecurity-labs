@@ -41,27 +41,34 @@ vlan 30
 exit
 ```
 
-Assign each end-device port to its VLAN. Replace the interface names with the ports connected to the devices:
+On both switches, the end-device ports are:
+
+- Server (VLAN 10): FastEthernet 0/3
+- Sales PC (VLAN 20): FastEthernet 0/1
+- HR PC (VLAN 30): FastEthernet 0/2
+
+Assign the ports:
 
 ```text
-interface <server-port>
+configure terminal
+interface fastEthernet 0/3
  switchport mode access
  switchport access vlan 10
 exit
-interface <sales-pc-port>
+interface fastEthernet 0/1
  switchport mode access
  switchport access vlan 20
 exit
-interface <hr-pc-port>
+interface fastEthernet 0/2
  switchport mode access
  switchport access vlan 30
 exit
 ```
 
-Configure the switch port connected to the router as a trunk:
+The switch port facing the router is GigabitEthernet 0/1. Configure it as a trunk:
 
 ```text
-interface <router-facing-port>
+interface gigabitEthernet 0/1
  switchport mode trunk
 exit
 end
@@ -93,7 +100,7 @@ The WAN link uses the `255.255.255.252` subnet mask. Each end device receives an
 
 The physical router interface connected to the switch must be enabled. Create one subinterface for each VLAN, associate it with the VLAN ID using 802.1Q encapsulation, and assign its gateway address.
 
-Replace `<LAN-interface>` with the physical router interface connected to the switch. The example uses G0/0.
+The router interface connected to the switch is GigabitEthernet 0/1 at both sites. The WAN interface is GigabitEthernet 0/0.
 
 ### On R1 — Site A
 
@@ -107,11 +114,11 @@ interface gigabitEthernet 0/0.10
  encapsulation dot1Q 10
  ip address 192.168.10.1 255.255.255.0
 exit
-interface gigabitEthernet 0/0.20
+interface gigabitEthernet 0/1.20
  encapsulation dot1Q 20
  ip address 192.168.20.1 255.255.255.0
 exit
-interface gigabitEthernet 0/0.30
+interface gigabitEthernet 0/1.30
  encapsulation dot1Q 30
  ip address 192.168.30.1 255.255.255.0
 exit
@@ -129,11 +136,11 @@ interface gigabitEthernet 0/0.10
  encapsulation dot1Q 10
  ip address 192.168.110.1 255.255.255.0
 exit
-interface gigabitEthernet 0/0.20
+interface gigabitEthernet 0/1.20
  encapsulation dot1Q 20
  ip address 192.168.120.1 255.255.255.0
 exit
-interface gigabitEthernet 0/0.30
+interface gigabitEthernet 0/1.30
  encapsulation dot1Q 30
  ip address 192.168.130.1 255.255.255.0
 exit
@@ -143,13 +150,13 @@ The same VLAN ID at each site does not mean the sites share one Layer 2 VLAN. Ea
 
 ## 4. Configure the WAN Link
 
-Configure the router interfaces connected to each other. Replace the example interface name with the actual WAN-facing interface in the topology.
+The WAN-facing interface is GigabitEthernet 0/0 on both routers.
 
 ### On R1
 
 ```text
 configure terminal
-interface <WAN-interface>
+interface gigabitEthernet 0/0
  ip address 10.0.0.1 255.255.255.252
  no shutdown
 exit
@@ -159,7 +166,7 @@ exit
 
 ```text
 configure terminal
-interface <WAN-interface>
+interface gigabitEthernet 0/0
  ip address 10.0.0.2 255.255.255.252
  no shutdown
 exit
