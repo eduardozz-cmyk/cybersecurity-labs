@@ -1,131 +1,158 @@
 # DNS and NAT Troubleshooting
 
-## 1. Objective and environment
+## Objective
 
-Several new PCs had recently been connected to the network. Users at Hosts A and C could not access the cloud-hosted timecard system at `timecards.com`.
+Investigate why Hosts A and C cannot access the cloud-hosted timecard system at `timecards.com`. Check network connectivity, identify the DNS and NAT issues, apply the necessary corrections, and verify that the service is reachable.
 
-The objective was to investigate the connectivity problem, identify the cause and restore access. Although DNS was suggested as a possible cause, I started by checking basic network connectivity before focusing on DNS.
+## Environment
 
-**Environment:** Cisco Packet Tracer, multiple LANs connected through routers and switches, a DNS server, and an Edge router providing external connectivity and NAT.
+- **Tool:** Cisco Packet Tracer
+- **Hosts:** Hosts A, B, and C; Admin laptop
+- **DNS server:** `172.16.30.250`
+- **Timecard server:** `215.1.1.49`
+- **Edge router:** Internal interface `172.16.20.10`; external interface `215.1.1.50`
+- **Routing and translation:** Existing routed network with NAT on the Edge router
 
-## 2. Implementation and configuration
+## Scenario
 
-The network already had routing, DNS and NAT configured. During the investigation, I inspected the DNS A record and the Edge router's NAT configuration.
+Several new PCs were recently connected to the network. Users at Hosts A and C reported that they could not access the cloud-hosted timecard system using `timecards.com`.
 
-The relevant original NAT configuration was:
+DNS was suggested as a possible cause. I started by checking the hosts' network configuration and connectivity before investigating DNS, routing, and NAT.
+
+## 1. Initial connectivity checks
+
+I started on Host A by running:
+
+```cmd
+ipconfig
+```
+
+I used the output to identify the host's IP configuration and default gateway. Host A was configured with the address `10.10.10.5/24`, and its default gateway was `10.10.10.1`.
+
+I first checked whether the default gateway was reachable:
+
+```cmd
+ping 10.10.10.1
+```
+
+The ping succeeded. I then checked connectivity to the DNS server:
+
+```cmd
+ping 172.16.30.250
+```
+
+This also succeeded.
+
+Next, I tested the timecard server directly by IP address:
+
+```cmd
+ping 215.1.1.49
+```
+
+The request timed out. Since the server could not be reached by IP address, the issue was not just DNS name resolution.
+
+I also tested the Core router's address on the Edge–Core transit network:
+
+```cmd
+ping 172.16.20.9
+```
+
+This test failed, giving me another point to investigate along the network path.
+
+## 2. Tracing the route
+
+From Host C, I ran:
+
+```cmd
+tracert 215.1.1.49
+```
+
+The trace showed these Layer 3 hops:
+
+```text
+1  10.30.30.3
+2  172.16.20.5
+3  172.16.20.10
+4  Request timed out
+```
+
+The traffic reached the Edge router's internal interface at `172.16.20.10`, but the trace did not reach the destination. This helped narrow the investigation towards the Edge router and its external connectivity.
+
+## 3. Checking DNS
+
+I inspected the DNS service and found that the A record for `timecards.com` pointed to the wrong IP address:
+
+```text
+timecards.com → 214.1.1.10
+```
+
+The timecard server's actual address was `215.1.1.49`, so I corrected the record:
+
+```text
+timecards.com → 215.1.1.49
+```
+
+This corrected the hostname's destination, but the server was still unreachable by IP address. I continued investigating rather than treating DNS as the only problem.
+
+## 4. Inspecting and correcting NAT
+
+I inspected the Edge router's running configuration:
+
+```cisco
+show running-config
+```
+
+The Edge router had its internal interface configured as NAT inside and its external interface as NAT outside:
+
+- **G0/0/0:** `172.16.20.10` — `ip nat inside`
+- **G0/0/1:** `215.1.1.50` — `ip nat outside`
+
+The existing dynamic NAT configuration used this pool:
 
 ```cisco
 ip nat pool NAT_POOL 192.168.100.10 192.168.100.50 netmask 255.255.255.0
 ip nat inside source list NAT_LIST pool NAT_POOL
 ```
 
-The Edge router used G0/0/0 (`172.16.20.10`) as its NAT inside interface and G0/0/1 (`215.1.1.50`) as its NAT outside interface.
+The pool used private addresses, which were not suitable as translated source addresses for communication over the external network. The external network was `215.1.1.48/30`, so I used the Edge router's outside interface address for PAT instead.
 
-## 3. Troubleshooting process
-
-### Initial checks
-
-I started on Host A by checking its IP configuration:
-
-```cmd
-ipconfig
-```
-
-This showed the host's network settings, including its default gateway. I used the gateway address to begin checking local connectivity.
-
-I tested the default gateway:
-
-```cmd
-ping 10.10.10.1
-```
-
-The gateway responded. I then tested the DNS server:
-
-```cmd
-ping 172.16.30.250
-```
-
-This also succeeded, confirming that Host A could reach its gateway and the DNS server.
-
-However, a direct ping to the Timecard server failed:
-
-```cmd
-ping 215.1.1.49
-```
-
-This showed that the problem was not limited to hostname resolution.
-
-### Tracing the path
-
-I used `tracert` from Host C to investigate how far traffic travelled toward the server:
-
-```cmd
-tracert 215.1.1.49
-```
-
-The trace reached the Edge router's internal side before timing out. I also checked the Edge router's external interface (`215.1.1.50`), which was reachable, while the Timecard server (`215.1.1.49`) was not.
-
-These checks shifted the investigation toward the Edge router's external connectivity and NAT configuration.
-
-### Checking DNS
-
-I inspected the DNS service and found that the A record for the timecard system pointed to the wrong address:
-
-```text
-timecards.com → 214.1.1.10
-```
-
-I corrected it to the server's address:
-
-```text
-timecards.com → 215.1.1.49
-```
-
-Correcting the record addressed the name-resolution problem, but the server was still unreachable by IP address. This indicated that DNS was not the only issue.
-
-### Inspecting NAT
-
-I reviewed the Edge router's running configuration:
-
-```cisco
-show running-config
-```
-
-The router had a default route through its external interface and the expected NAT inside/outside interface designations.
-
-However, the dynamic NAT pool used private addresses (`192.168.100.10–192.168.100.50`). These were not suitable as Internet-facing translated addresses in this topology. The outside network was `215.1.1.48/30`, so the router's outside interface address (`215.1.1.50`) was the address available to use for PAT.
-
-## 4. Testing and results
-
-I replaced the pool-based dynamic NAT rule with PAT.
-
-First, I removed the NAT rule that referenced the pool, then deleted the pool. The router initially rejected the pool deletion because the pool was still in use.
+I first removed the NAT rule that referenced the pool:
 
 ```cisco
 no ip nat inside source list NAT_LIST pool NAT_POOL
+```
+
+Then I deleted the pool:
+
+```cisco
 no ip nat pool NAT_POOL
 ```
 
-I kept the existing `NAT_LIST` ACL and the NAT inside/outside interface settings, then configured PAT using the outside interface:
+The router initially rejected the pool deletion because it was still referenced by the NAT rule. Removing the rule first allowed me to delete the pool.
+
+I kept the existing `NAT_LIST` access list and the NAT inside/outside interface settings, then configured PAT:
 
 ```cisco
 ip nat inside source list NAT_LIST interface GigabitEthernet0/0/1 overload
 ```
 
-After correcting DNS and replacing dynamic NAT with PAT, I tested from the Admin laptop:
+## 5. Testing and results
 
-| Test | Result |
-|---|---|
-| `ping 215.1.1.49` | Successful |
-| `ping timecards.com` | Resolved to `215.1.1.49` and successful |
+After correcting the DNS record and replacing the dynamic NAT pool with PAT, I tested connectivity from the Admin laptop:
 
-Both tests succeeded, confirming that the server was reachable by IP address and hostname.
+```cmd
+ping 215.1.1.49
+ping timecards.com
+```
 
-## 5. Key concepts and lessons learned
+Both tests succeeded. The hostname resolved to `215.1.1.49`, and the server responded to the ping.
 
-- Start troubleshooting with the host's IP configuration and basic connectivity checks before assuming the suggested cause is correct.
-- A successful ping to the default gateway and DNS server does not guarantee connectivity to an external destination.
-- Traceroute helps show how far traffic gets through the Layer 3 path.
-- DNS resolves a hostname to an IP address; NAT translates eligible source addresses. They solve different problems.
-- Dynamic NAT requires a suitable pool of externally routable addresses. PAT can let multiple internal devices share the router's outside interface address by distinguishing sessions with port numbers.
-- A NAT pool cannot be deleted while a NAT rule still references it.
+## Key concepts and lessons learned
+
+- I started with `ipconfig` and basic connectivity checks instead of assuming DNS was the only cause.
+- A host can reach its default gateway and DNS server while still being unable to reach an external destination.
+- Testing a destination by IP address helps distinguish a connectivity problem from a name-resolution problem.
+- Traceroute helped me see how far traffic travelled through the Layer 3 path.
+- DNS resolves a hostname to an IP address; NAT translates source addresses. Fixing one does not automatically fix the other.
+- The original NAT pool used private addresses. PAT allowed internal hosts to share the Edge router's outside interface address, using port numbers to distinguish their connections.
+- A NAT pool must no longer be referenced by a NAT rule before it can be removed.
