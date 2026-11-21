@@ -1,60 +1,54 @@
 # Cybersecurity Labs
 
-Hands-on Linux, networking, Bash, and cybersecurity labs documenting my learning and practical skills.
+A collection of hands-on IT and cybersecurity projects focused on networking, Linux, system administration, and practical troubleshooting.
 
-## Purpose
+## About
 
-This repository contains practical labs and projects that I complete while developing my skills in IT and cybersecurity.
+This repository documents my progress through practical exercises and projects as I develop my technical skills.
 
-The goal is to learn by **building, troubleshooting, and documenting** rather than only completing courses.
+My approach is based on building, testing, troubleshooting, and understanding how systems and networks work rather than simply following tutorials.
 
-## Areas
+## Technical Areas
 
-- 🐧 Linux
-- 🌐 Networking
-- 💻 Bash
-- 🔐 Cybersecurity
-- 🛠️ System Administration
+- **Networking:** IP addressing, subnetting, routing, VLANs, switching, NAT, and network troubleshooting.
+- **Linux & System Administration:** User management, permissions, processes, services, web servers, and remote administration.
+- **Bash:** Scripting, automation, and command-line tools.
+- **Cybersecurity:** Practical security concepts, analysis, and hands-on exercises.
 
-## Labs
-
-### Linux
-
-- [01 — User & Permission Management](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/linux/01-user-and-permission-management)
-- [02 — Processes & Services](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/linux/02-processes-and-services)
-- [03 — Web Server Troubleshooting](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/linux/03-web-server-troubleshooting)
-- [04 — SSH & Remote Administration](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/linux/04-ssh-remote-administration)
+## Projects & Labs
 
 ### Networking
 
-- [01 — VLSM Subnetting & Static Routing](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/01-vlsm-subnetting-static-routing)
-- [02 — VLSM Subnetting & Static Routing](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/02-vlsm-subnetting-static-routing)
-- [03 — Basic IPv6 Configuration](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/03-ipv6-configuration)
-- [04 — Static IPv4 Routing](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/04-static-ipv4-routing)
-- [05 — Router-on-a-Stick VLAN Configuration](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/05-router-on-a-stick-vlan)
-- [06 — Spanning Tree Protocol (STP)](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/06-spanning-tree-protocol)
-- [07 — VLAN Trunking Protocol (VTP)](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/07-vlan-trunking-protocol)
-- [08 — Network Address Translation (NAT)](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/08-nat)
-- [09 — Branch Network Configuration](https://github.com/eduardozz-cmyk/cybersecurity-labs/tree/main/networking/09-branch-network)
+Practical network configurations and troubleshooting scenarios, including routing, switching, network services, and multi-site networks.
+
+[Explore Networking Labs](networking/)
+
+### Linux & System Administration
+
+Hands-on exercises involving Linux administration, services, permissions, and remote access.
+
+[Explore Linux Labs](linux/)
 
 ### Bash
 
-Bash scripting labs and automation projects will be added as I develop my scripting skills.
+Scripting and automation projects focused on developing command-line and automation skills.
+
+*Projects in progress.*
 
 ### Cybersecurity
 
-Security-focused labs and practical projects will be added as I progress toward more advanced cybersecurity topics.
+Practical exercises exploring security concepts and techniques as I progress toward more specialized topics.
 
-## Learning Approach
+*Projects will be added as I develop these skills.*
 
-For each lab, I document:
+## Documentation
 
-- Objective
-- Environment
-- Scenario
-- Implementation
-- Troubleshooting
+Projects include relevant details such as:
+
+- Objective and environment
+- Implementation and configuration
+- Troubleshooting process
 - Testing and results
-- What I learned
+- Key concepts and lessons learned
 
-The labs gradually increase in complexity as I develop my skills.
+The focus is on understanding the reasoning behind each solution and being able to reproduce it independently.
