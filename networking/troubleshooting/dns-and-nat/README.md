@@ -96,7 +96,7 @@ This corrected the hostname's destination, but the server was still unreachable 
 
 ## 4. Inspecting and correcting NAT
 
-I inspected the Edge router's running configuration:
+To investigate the Edge router, I connected to it remotely using SSH. Once connected, I inspected its running configuration:
 
 ```cisco
 show running-config
@@ -153,6 +153,7 @@ Both tests succeeded. The hostname resolved to `215.1.1.49`, and the server resp
 - A host can reach its default gateway and DNS server while still being unable to reach an external destination.
 - Testing a destination by IP address helps distinguish a connectivity problem from a name-resolution problem.
 - Traceroute helped me see how far traffic travelled through the Layer 3 path.
+- SSH allowed me to access the Edge router remotely and inspect its configuration.
 - DNS resolves a hostname to an IP address; NAT translates source addresses. Fixing one does not automatically fix the other.
 - The original NAT pool used private addresses. PAT allowed internal hosts to share the Edge router's outside interface address, using port numbers to distinguish their connections.
 - A NAT pool must no longer be referenced by a NAT rule before it can be removed.
