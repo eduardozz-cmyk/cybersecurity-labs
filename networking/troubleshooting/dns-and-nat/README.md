@@ -29,7 +29,7 @@ ipconfig
 
 I used the output to identify the host's IP configuration and default gateway. Host A was configured with the address `10.10.10.5/24`, and its default gateway was `10.10.10.1`.
 
-I first checked whether the default gateway was reachable:
+I tested connectivity to Host A's default gateway:
 
 ```cmd
 ping 10.10.10.1
@@ -51,23 +51,48 @@ ping 215.1.1.49
 
 The request timed out. Since the server could not be reached by IP address, the issue was not just DNS name resolution.
 
-I also tested the Core router's address on the Edge–Core transit network:
+I also tested the default gateways from Hosts B and C to check whether their local network connectivity was working:
+
+**Host B**
 
 ```cmd
-ping 172.16.20.9
+ping 10.20.20.3
 ```
 
-This test failed, giving me another point to investigate along the network path.
+**Host C**
+
+```cmd
+ping 10.30.30.3
+```
+
+These checks were part of verifying connectivity from the other affected networks before following the route towards the server.
 
 ## 2. Tracing the route
 
-From Host C, I ran:
+I ran traceroute from both Host B and Host C to the timecard server.
+
+**Host B**
 
 ```cmd
 tracert 215.1.1.49
 ```
 
-The trace showed these Layer 3 hops:
+The trace showed:
+
+```text
+1  10.20.20.3
+2  172.16.20.5
+3  172.16.20.10
+4  Request timed out
+```
+
+**Host C**
+
+```cmd
+tracert 215.1.1.49
+```
+
+The trace showed:
 
 ```text
 1  10.30.30.3
@@ -76,7 +101,7 @@ The trace showed these Layer 3 hops:
 4  Request timed out
 ```
 
-The traffic reached the Edge router's internal interface at `172.16.20.10`, but the trace did not reach the destination. This helped narrow the investigation towards the Edge router and its external connectivity.
+Both traces reached the Edge router's internal interface at `172.16.20.10`, but did not reach the destination. This helped narrow the investigation towards the Edge router and its external connectivity.
 
 ## 3. Checking DNS
 
@@ -94,9 +119,17 @@ timecards.com → 215.1.1.49
 
 This corrected the hostname's destination, but the server was still unreachable by IP address. I continued investigating rather than treating DNS as the only problem.
 
-## 4. Inspecting and correcting NAT
+## 4. Accessing the Edge router and inspecting NAT
 
-To investigate the Edge router, I connected to it remotely using SSH. Once connected, I inspected its running configuration:
+To investigate the Edge router, I connected to it remotely from the Admin laptop using SSH. I used the SSH client to connect to the router's reachable IP address, `172.16.20.10`, and logged in to its command-line interface.
+
+The SSH command uses this format:
+
+```cmd
+ssh -l <username> 172.16.20.10
+```
+
+Once connected, I inspected the running configuration:
 
 ```cisco
 show running-config
@@ -149,11 +182,11 @@ Both tests succeeded. The hostname resolved to `215.1.1.49`, and the server resp
 
 ## Key concepts and lessons learned
 
-- I started with `ipconfig` and basic connectivity checks instead of assuming DNS was the only cause.
-- A host can reach its default gateway and DNS server while still being unable to reach an external destination.
+- I started with `ipconfig` to identify the default gateway, then checked local connectivity before assuming DNS was the only cause.
+- Testing the default gateways from Hosts A, B, and C helped check connectivity within each LAN.
+- Traceroute from Hosts B and C showed that traffic reached the Edge router's internal interface but did not reach the external server.
 - Testing a destination by IP address helps distinguish a connectivity problem from a name-resolution problem.
-- Traceroute helped me see how far traffic travelled through the Layer 3 path.
-- SSH allowed me to access the Edge router remotely and inspect its configuration.
+- SSH allowed me to access the Edge router remotely from the Admin laptop and inspect its configuration.
 - DNS resolves a hostname to an IP address; NAT translates source addresses. Fixing one does not automatically fix the other.
 - The original NAT pool used private addresses. PAT allowed internal hosts to share the Edge router's outside interface address, using port numbers to distinguish their connections.
 - A NAT pool must no longer be referenced by a NAT rule before it can be removed.
