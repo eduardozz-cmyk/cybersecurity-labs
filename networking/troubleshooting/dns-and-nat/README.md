@@ -2,80 +2,114 @@
 
 ## Objective
 
-Restore access to the Timecard server by identifying and correcting two configuration problems: an incorrect DNS record and an unsuitable dynamic NAT configuration.
+Investigate why the Admin laptop could not reach the Timecard server, identify the causes, and restore connectivity.
 
 ## Environment
 
 - **Tool:** Cisco Packet Tracer
 - **Devices:** Admin laptop, Edge router, DNS server, and Timecard server
+- **DNS server:** `172.16.30.250`
 - **Edge inside interface:** G0/0/0 — `172.16.20.10/30`
 - **Edge outside interface:** G0/0/1 — `215.1.1.50/30`
 - **Timecard server:** `215.1.1.49`
 
-## Problems Found
+## 1. Investigate DNS Resolution
 
-The Admin laptop could not access the Timecard server by its hostname.
+Start from the Admin laptop and test the server by its hostname:
 
-Two separate issues were identified:
+```text
+ping timecard.com
+```
 
-1. The DNS record for `timecard.com` pointed to `214.1.1.10` instead of the server's actual address, `215.1.1.49`.
-2. The Edge router used a dynamic NAT pool containing private addresses (`192.168.100.10–192.168.100.50`) for traffic going toward the external network.
+The ping failed, and the output showed that `timecard.com` resolved to `214.1.1.10`. That did not match the Timecard server's address in the topology (`215.1.1.49`).
 
-## 1. Correct the DNS Record
+Before changing DNS, check that the Admin laptop can reach its DNS server:
 
-Update the `timecard.com` A record so it points to the Timecard server:
+```text
+ping 172.16.30.250
+```
+
+The DNS server responded, so it was reachable. In the DNS server's **Services → DNS** settings, inspect the A record and confirm that it maps:
+
+```text
+timecard.com → 214.1.1.10
+```
+
+The record contained the wrong address. Correct it to:
 
 ```text
 timecard.com → 215.1.1.49
 ```
 
-DNS translates the hostname into the server's IP address. It does not provide network connectivity by itself.
+This fixes the name-to-address mapping. It does not, by itself, guarantee that packets can reach the server.
 
-## 2. Replace Dynamic NAT with PAT
+## 2. Inspect the Edge Router's NAT Configuration
 
-The Edge router's NAT rule referenced the private-address pool:
+The destination address was now identified correctly, so the next step was to inspect how the Edge router translated traffic leaving the internal network.
+
+From the Admin laptop, connect to the Edge router using SSH:
 
 ```text
+ssh -l admin 172.16.20.10
+```
+
+Then inspect its configuration:
+
+```cisco
+show running-config
+```
+
+The NAT section contained:
+
+```cisco
+ip nat pool NAT_POOL 192.168.100.10 192.168.100.50 netmask 255.255.255.0
 ip nat inside source list NAT_LIST pool NAT_POOL
 ```
 
-That pool was unsuitable for this external connection because its addresses were private and not publicly routable.
+The router's outside interface was `GigabitEthernet0/0/1`, with address `215.1.1.50`. However, the dynamic NAT pool contained private addresses (`192.168.100.10–192.168.100.50`).
 
-Remove the rule before deleting the pool, since the rule depends on it:
+Those private addresses are not publicly routable. The router therefore needed to translate inside traffic to an address usable on its outside network.
+
+## 3. Replace Dynamic NAT with PAT
+
+Remove the NAT rule first, then delete the pool it references:
 
 ```cisco
 no ip nat inside source list NAT_LIST pool NAT_POOL
 no ip nat pool NAT_POOL
 ```
 
-Keep the existing `NAT_LIST` access list and the inside/outside interface designations. Replace the old rule with PAT using the outside interface:
+Keep the `NAT_LIST` access list and the existing inside/outside interface designations.
+
+Configure PAT using the outside interface:
 
 ```cisco
 ip nat inside source list NAT_LIST interface GigabitEthernet0/0/1 overload
 ```
 
-This uses the outside interface address (`215.1.1.50`) for translations. The `overload` keyword allows multiple internal devices to share that address by distinguishing their sessions with port numbers (or protocol-specific identifiers, such as ICMP identifiers).
+This translates eligible inside addresses to the outside interface's address (`215.1.1.50`). The `overload` keyword allows multiple internal devices to share that address by distinguishing their sessions with port numbers (or protocol-specific identifiers, such as ICMP identifiers).
 
-## 3. Verify Connectivity
+## 4. Verify the Fixes
 
-From the Admin laptop, test the server by IP address:
+From the Admin laptop, test the Timecard server directly by IP:
 
 ```text
 ping 215.1.1.49
 ```
 
-Then test by hostname:
+Then test using its hostname:
 
 ```text
 ping timecard.com
 ```
 
-Both tests succeeded after the DNS record and NAT configuration were corrected.
+Both tests succeeded. The hostname resolved to the corrected server address, and the server was reachable.
 
 ## Key Takeaways
 
-- DNS resolution and NAT are separate parts of a connection; fixing one does not fix the other.
-- An ACL selects which inside addresses are eligible for translation.
-- Dynamic NAT uses addresses from a configured pool. The pool must contain addresses appropriate for the external network.
-- PAT can translate multiple internal devices using the router's outside interface address.
+- Check what address a hostname resolves to before assuming the destination server is unreachable.
+- Verify that the DNS server itself is reachable, then inspect its A record.
+- DNS provides the destination IP; NAT determines how eligible inside source addresses are translated.
+- A dynamic NAT pool must contain addresses appropriate for the outside network.
+- PAT can use the router's outside interface address to translate traffic from multiple internal devices.
 - Remove a NAT rule before deleting a pool that the rule references.
