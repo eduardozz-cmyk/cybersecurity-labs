@@ -65,8 +65,6 @@ ping 10.20.20.3
 ping 10.30.30.3
 ```
 
-These checks were part of verifying connectivity from the other affected networks before following the route towards the server.
-
 ## 2. Tracing the route
 
 I ran traceroute from both Host B and Host C to the timecard server.
@@ -121,12 +119,10 @@ This corrected the hostname's destination, but the server was still unreachable 
 
 ## 4. Accessing the Edge router and inspecting NAT
 
-To investigate the Edge router, I connected to it remotely from the Admin laptop using SSH. I used the SSH client to connect to the router's reachable IP address, `172.16.20.10`, and logged in to its command-line interface.
-
-The SSH command uses this format:
+To investigate the Edge router, I opened the Command Prompt on the Admin laptop and connected to the router remotely using SSH. I used the router's internal interface address, `172.16.20.10`, and logged in with the username `admin`. I entered the password when prompted.
 
 ```cmd
-ssh -l <username> 172.16.20.10
+ssh -l admin 172.16.20.10
 ```
 
 Once connected, I inspected the running configuration:
