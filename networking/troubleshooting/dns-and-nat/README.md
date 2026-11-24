@@ -2,7 +2,7 @@
 
 ## Objective
 
-Investigate why Hosts A and C cannot access the cloud-hosted timecard system at `timecards.com`. Check network connectivity, identify the DNS and NAT issues, apply the necessary corrections, and verify that the service is reachable.
+Investigate why Hosts A and C cannot access the cloud-hosted timecard system at `timecards.com`. Follow a systematic troubleshooting process, identify the source of the connectivity failure, apply the necessary fix, and verify that the service is reachable.
 
 ## Environment
 
